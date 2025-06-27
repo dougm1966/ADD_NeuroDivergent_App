@@ -133,7 +133,7 @@
     "verify:sprint:4H": "npm run verify:agent4-handoff"
   },
   "dependencies": {
-    "expo": "~51.0.0",
+    "expo": "~53.0.0",
     "react": "18.2.0",
     "react-native": "0.74.5",
     "zustand": "4.5.2",
@@ -153,7 +153,7 @@
     "@types/react-native": "~0.73.0",
     "typescript": "~5.3.3",
     "jest": "^29.2.1",
-    "jest-expo": "~51.0.0",
+    "jest-expo": "~53.0.0",
     "@testing-library/react-native": "^12.0.0",
     "@testing-library/jest-native": "^5.4.0",
     "eslint": "^8.57.0",
