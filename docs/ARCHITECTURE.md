@@ -5,7 +5,7 @@ Here's the corrected ARCHITECTURE.md file:
 ## System Architecture Overview
 
 ### Frontend (Expo React Native)
-- **Framework**: Expo SDK 51.0.0 with React Native 0.74.5 and TypeScript 5.3.3
+- **Framework**: Expo SDK 53.0.0 with React Native 0.79.0 and TypeScript 5.8.3
 - **Navigation**: React Navigation 6.1.17 (DO NOT CHANGE)
 - **State Management**: Zustand 4.5.2 (DO NOT USE REDUX)
 - **Local Storage**: AsyncStorage 1.21.0 (offline-first)
