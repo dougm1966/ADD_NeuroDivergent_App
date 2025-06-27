@@ -46,7 +46,7 @@ npm list zustand@4.5.2
 npm list @supabase/supabase-js@2.39.3
 npm list @react-navigation/native@6.1.17
 npm list expo@~51.0.0
-npm list react-native@0.74.5
+npm list react-native@0.79.0
 
 echo "Development dependencies:"
 npm list --dev typescript

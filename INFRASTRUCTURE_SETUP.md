@@ -134,8 +134,8 @@
   },
   "dependencies": {
     "expo": "~53.0.0",
-    "react": "18.2.0",
-    "react-native": "0.74.5",
+    "react": "19.0.0",
+    "react-native": "0.79.0",
     "zustand": "4.5.2",
     "@supabase/supabase-js": "2.39.3",
     "@react-navigation/native": "6.1.17",
@@ -149,7 +149,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@types/react": "~18.2.45",
+    "@types/react": "~19.0.0",
     "@types/react-native": "~0.73.0",
     "typescript": "~5.3.3",
     "jest": "^29.2.1",
