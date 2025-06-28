@@ -35,11 +35,12 @@ Stores daily brain state check-ins that drive app adaptation.
 CREATE TABLE brain_states (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  energy_level INTEGER CHECK (energy_level BETWEEN 1 AND 10),
-  focus_level INTEGER CHECK (focus_level BETWEEN 1 AND 10),
-  mood_level INTEGER CHECK (mood_level BETWEEN 1 AND 10),
+  energy_level INTEGER NOT NULL CHECK (energy_level BETWEEN 1 AND 10),
+  focus_level INTEGER NOT NULL CHECK (focus_level BETWEEN 1 AND 10),
+  mood_level INTEGER NOT NULL CHECK (mood_level BETWEEN 1 AND 10),
   notes TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT brain_states_notes_length CHECK (LENGTH(notes) <= 500)
 );
 ```
 
@@ -62,7 +63,9 @@ CREATE TABLE user_subscriptions (
   ai_requests_limit INTEGER DEFAULT 10,
   reset_date TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '1 month'),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT user_subscriptions_requests_positive CHECK (ai_requests_used >= 0),
+  CONSTRAINT user_subscriptions_limit_positive CHECK (ai_requests_limit > 0)
 );
 ```
 
@@ -82,12 +85,15 @@ CREATE TABLE tasks (
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  complexity_level INTEGER CHECK (complexity_level BETWEEN 1 AND 5),
+  complexity_level INTEGER NOT NULL CHECK (complexity_level BETWEEN 1 AND 5),
   estimated_minutes INTEGER,
-  is_completed BOOLEAN DEFAULT FALSE,
+  is_completed BOOLEAN NOT NULL DEFAULT FALSE,
   ai_breakdown JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT tasks_title_not_empty CHECK (LENGTH(TRIM(title)) > 0),
+  CONSTRAINT tasks_description_length CHECK (LENGTH(description) <= 1000),
+  CONSTRAINT tasks_time_valid CHECK (estimated_minutes > 0 AND estimated_minutes <= 1440)
 );
 ```
 
@@ -153,8 +159,16 @@ CREATE POLICY "Users can delete own tasks" ON tasks
 -- Brain states: User + date lookups
 CREATE INDEX idx_brain_states_user_date ON brain_states(user_id, created_at DESC);
 
+-- Brain states: Daily lookups optimization
+CREATE INDEX idx_brain_states_today ON brain_states(user_id, (created_at::date)) 
+  WHERE created_at >= CURRENT_DATE;
+
 -- Tasks: User + completion status + date
 CREATE INDEX idx_tasks_user_completed ON tasks(user_id, is_completed, created_at DESC);
+
+-- Tasks: Active task filtering optimization
+CREATE INDEX idx_tasks_user_active ON tasks(user_id, created_at DESC) 
+  WHERE is_completed = false;
 
 -- Tasks: Complexity filtering for brain state adaptation
 CREATE INDEX idx_tasks_complexity ON tasks(user_id, complexity_level, is_completed);
@@ -164,6 +178,9 @@ CREATE INDEX idx_user_subscriptions_user ON user_subscriptions(user_id);
 
 -- Subscriptions: Reset date for monthly cleanup
 CREATE INDEX idx_user_subscriptions_reset_date ON user_subscriptions(reset_date);
+
+-- Subscriptions: Tier-based analytics optimization
+CREATE INDEX idx_user_subscriptions_tier ON user_subscriptions(tier, ai_requests_used);
 ```
 
 **Performance Rationale:**
