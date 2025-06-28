@@ -35,7 +35,7 @@ npx create-expo-app@latest . --template blank-typescript
 npm install zustand@4.5.2
 npm install @supabase/supabase-js@2.39.3
 npm install @react-navigation/native@6.1.17
-npm install @react-navigation/stack@6.3.21
+npm install @react-navigation/stack@6.3.29
 npm install react-native-screens react-native-safe-area-context
 npm install @react-native-async-storage/async-storage@1.21.0
 ```
@@ -51,7 +51,7 @@ mkdir -p src/components src/screens src/store src/services src/types src/utils s
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=your-project-url-here
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-EXPO_PUBLIC_OPENAI_API_KEY=your-openai-key-here
+# Note: OpenAI API key is handled server-side via Supabase Edge Functions for security
 ```
 
 ### Task 4: TypeScript Configuration

@@ -396,16 +396,35 @@ Format as JSON:
   },
 
   /**
-   * Call OpenAI API with error handling
+   * Call OpenAI API via Supabase Edge Function (secure server-side)
    */
   async callOpenAI(prompt: string, brainState: BrainState): Promise<TaskBreakdown | null> {
     try {
-      const apiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
-      if (!apiKey) {
-        console.error('OpenAI API key not configured');
+      // SECURITY: Call Supabase Edge Function instead of direct OpenAI API
+      // This keeps the API key secure on the server side
+      const response = await supabase.functions.invoke('openai-task-breakdown', {
+        body: { prompt, brainState }
+      });
+
+      if (response.error) {
+        console.error('OpenAI Edge Function error:', response.error);
         return null;
       }
 
+      return response.data;
+    } catch (error) {
+      console.error('Failed to call OpenAI Edge Function:', error);
+      return null;
+    }
+  },
+
+  /**
+   * DEPRECATED: Direct OpenAI API call (moved to Edge Function for security)
+   */
+  async _deprecatedDirectOpenAICall(prompt: string, brainState: BrainState): Promise<TaskBreakdown | null> {
+    try {
+      // This method is kept for reference but should not be used
+      // OpenAI API key should never be exposed client-side
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {

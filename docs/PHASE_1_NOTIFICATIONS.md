@@ -7,19 +7,28 @@ Phase 1 requires a foundational notification system that provides essential func
 ## Agent Implementation Ownership
 
 ### **Agent 3 (Core Features)**: Notification Logic & Scheduling
-- **Responsible for**: Notification scheduling logic, brain state adaptation, user preference management
+- **Responsible for**: Notification scheduling service, brain state adaptation for notifications, notification timing algorithms
+- **Does NOT own**: UI components, settings screens, notification display
 - **Deliverables**: Notification service classes, scheduling algorithms, brain state integration
 - **Integration**: Uses Agent 2's subscription service for quota checks
 
-### **Agent 4 (UI/UX)**: Notification UI Components & User Experience  
-- **Responsible for**: Notification display components, permission requests, settings UI
+### **Agent 4 (UI/UX)**: Notification UI Components & User Experience
+- **Responsible for**: Notification UI components, permission request flows, notification settings screens, visual preferences
+- **Does NOT own**: Scheduling logic, timing algorithms, data storage
 - **Deliverables**: Notification permission components, settings screens, gentle messaging patterns
 - **Integration**: Uses Agent 3's notification services for functionality
 
 ### **Agent 2 (Backend)**: Notification Data & Quota Integration
-- **Responsible for**: Notification preferences storage, quota status for notifications
+- **Responsible for**: Database schema for preferences, quota data, push notification tokens
+- **Does NOT own**: UI components, scheduling logic, display components
 - **Deliverables**: Notification preferences in user_subscriptions table, quota checking APIs
 - **Integration**: Provides data services that Agent 3 consumes
+
+### **Agent 1 (Foundation)**: Device Integration & Setup
+- **Responsible for**: Expo notification setup, device API integration, notification routing
+- **Does NOT own**: Business logic, UI components, data management
+- **Deliverables**: Notification configuration, device permission setup, deep linking
+- **Integration**: Provides foundation that all other agents build upon
 
 **Cross-Agent Integration**: Agent 3 handles the logic, Agent 4 handles the UX, Agent 2 provides the data foundation.
 

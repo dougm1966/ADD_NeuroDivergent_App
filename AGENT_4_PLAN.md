@@ -4,9 +4,9 @@
 Create neurodivergent-friendly design system, reusable components, and gentle freemium upgrade experiences through 8 focused sprints.
 
 ## Domain Ownership
-- **Primary**: Components, design system, accessibility, sensory customization, freemium UI
+- **Primary**: Components, design system, accessibility, sensory customization, freemium UI, notification UI components
 - **Branch**: `agent4/ui-components`
-- **Files You Own**: src/components/, src/constants/, accessibility features
+- **Files You Own**: src/components/, src/constants/, src/screens/NotificationSettingsScreen.tsx, accessibility features
 - **Dependencies**: Needs Agent 1's app shell and Agent 3's UI requirements
 
 ## Critical Rules (NEVER VIOLATE)

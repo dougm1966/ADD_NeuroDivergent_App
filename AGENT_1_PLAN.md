@@ -4,9 +4,9 @@
 Set up production-ready project infrastructure, navigation framework, and app shell with comprehensive error handling for neurodivergent productivity app.
 
 ## Domain Ownership
-- **Primary**: Infrastructure, navigation, app configuration, error handling, testing setup
+- **Primary**: Infrastructure, navigation, app configuration, error handling, testing setup, notification device integration
 - **Branch**: `agent1/foundation`
-- **Files You Own**: App.tsx, navigation/, app.json, package.json, error handling, testing configuration
+- **Files You Own**: App.tsx, navigation/, app.json, package.json, error handling, testing configuration, expo notification setup
 - **Dependencies**: Must complete before Agents 2, 3 & 4 can integrate
 
 ## Critical Rules (NEVER VIOLATE)

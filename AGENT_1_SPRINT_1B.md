@@ -25,7 +25,7 @@ Build a complete navigation framework that other agents can integrate with, incl
 ### Task 1: Install Navigation Dependencies
 ```bash
 # Run these in current directory (we're already in the project root)
-npm install @react-navigation/stack@6.3.21
+npm install @react-navigation/stack@6.3.29
 npx expo install react-native-screens react-native-safe-area-context
 npx expo install react-native-gesture-handler
 ```

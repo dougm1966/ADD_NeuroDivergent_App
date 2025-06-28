@@ -45,8 +45,8 @@ Create a working Supabase connection that Agent 3 can build upon for data operat
 EXPO_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
-# OpenAI Configuration (for later sprints)
-EXPO_PUBLIC_OPENAI_API_KEY=your-openai-key-here
+# OpenAI Configuration (server-side only - no client exposure)
+# OPENAI_API_KEY=your-openai-key-here (set in Supabase Edge Function secrets)
 ```
 
 **Security Note:** These environment variables start with `EXPO_PUBLIC_` because they need to be accessible in the React Native client. The anon key is safe to expose as it's designed for client-side use with Row Level Security.
@@ -58,6 +58,9 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+
+// Note: OpenAI API key is NOT exposed client-side
+// OpenAI calls are handled via Supabase Edge Functions for security
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
@@ -125,6 +128,7 @@ export const testEnvironmentVariables = (): boolean => {
   const requiredVars = [
     'EXPO_PUBLIC_SUPABASE_URL',
     'EXPO_PUBLIC_SUPABASE_ANON_KEY'
+    // Note: OpenAI API key removed - handled server-side via Supabase Edge Functions
   ];
 
   for (const varName of requiredVars) {

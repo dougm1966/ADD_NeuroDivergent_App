@@ -13,6 +13,7 @@ Build a secure, scalable database foundation with proper constraints and access 
 - Sprint 2A completed successfully
 - Supabase project accessible
 - Connection test passing
+- **Note**: OpenAI Edge Function implementation required (see Edge Function setup below)
 
 ## Critical Rules (NEVER VIOLATE)
 1. Schema: Follow EXACT field names from ARCHITECTURE.md
@@ -454,6 +455,71 @@ export const validateSchemaConstraints: () => Promise<boolean>;
 - `src/types/database.ts`
 - `src/services/__tests__/schemaValidation.ts`
 - Database schema with all tables, policies, and indexes
+
+## OpenAI Edge Function Setup (Required for Security)
+
+**IMPORTANT**: Due to security requirements from Sprint 2A, OpenAI API calls must be handled server-side via Supabase Edge Functions.
+
+### Create Edge Function for OpenAI Task Breakdown
+**File**: `supabase/functions/openai-task-breakdown/index.ts`
+```typescript
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+serve(async (req) => {
+  try {
+    const { prompt, brainState } = await req.json()
+    
+    // Get OpenAI API key from Edge Function secrets (secure)
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key not configured')
+    }
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a gentle AI assistant helping neurodivergent individuals break down tasks. Energy level: ${brainState.energy}, Focus: ${brainState.focus}`
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      })
+    })
+
+    const data = await response.json()
+    return new Response(JSON.stringify(data.choices[0].message.content), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+})
+```
+
+### Deploy Command
+```bash
+# Set the OpenAI API key as an Edge Function secret
+supabase secrets set OPENAI_API_KEY=your-actual-openai-key
+
+# Deploy the Edge Function
+supabase functions deploy openai-task-breakdown
+```
 
 ## Next Sprint Preview
 Sprint 2C will build the authentication service with user session management and automatic subscription initialization.

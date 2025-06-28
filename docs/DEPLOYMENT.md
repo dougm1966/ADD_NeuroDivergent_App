@@ -26,7 +26,7 @@ npx expo start
 # .env
 EXPO_PUBLIC_SUPABASE_URL=your-supabase-url
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-EXPO_PUBLIC_OPENAI_API_KEY=sk-your-openai-key
+# OpenAI API key is handled server-side via Supabase Edge Functions (not exposed client-side)
 EXPO_PUBLIC_OPENAI_RATE_LIMIT=10
 ```
 
@@ -309,7 +309,7 @@ eas build:configure
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
-EXPO_PUBLIC_OPENAI_API_KEY=sk-your-production-key
+# OpenAI API key is configured in Supabase Edge Function secrets (not exposed client-side)
 EXPO_PUBLIC_OPENAI_RATE_LIMIT=10
 EXPO_PUBLIC_ENVIRONMENT=production
 ```

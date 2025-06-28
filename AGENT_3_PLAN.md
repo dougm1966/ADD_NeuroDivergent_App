@@ -4,9 +4,9 @@
 Build brain state system, adaptive task management, and core business logic with freemium integration.
 
 ## Domain Ownership
-- **Primary**: Zustand stores, brain state logic, task management, adaptation algorithms
+- **Primary**: Zustand stores, brain state logic, task management, adaptation algorithms, notification scheduling logic
 - **Branch**: `agent3/brain-state`
-- **Files You Own**: src/store/, src/screens/, core feature logic
+- **Files You Own**: src/store/, src/screens/, src/services/notificationService.ts, core feature logic
 - **Dependencies**: Needs Agent 1's navigation and Agent 2's services
 
 ## Critical Rules (NEVER VIOLATE)
