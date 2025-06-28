@@ -145,13 +145,13 @@
     "react-native-safe-area-context": "4.10.5",
     "react-native-gesture-handler": "~2.16.1",
     "@react-native-async-storage/async-storage": "1.21.0",
-    "expo-constants": "~16.0.0"
+    "expo-constants": "~18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~19.0.0",
-    "@types/react-native": "~0.73.0",
-    "typescript": "~5.3.3",
+    "@types/react-native": "~0.79.0",
+    "typescript": "~5.8.3",
     "jest": "^29.2.1",
     "jest-expo": "~53.0.0",
     "@testing-library/react-native": "^12.0.0",
