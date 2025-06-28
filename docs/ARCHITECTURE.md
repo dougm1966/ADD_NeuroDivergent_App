@@ -6,11 +6,12 @@ Here's the corrected ARCHITECTURE.md file:
 
 ### Frontend (Expo React Native)
 - **Framework**: Expo SDK 53.0.0 with React Native 0.79.0 and TypeScript 5.8.3
+- **UI Library**: React Native Paper 5.14.5+ (OFFICIAL UI STANDARD - ALL components must use Paper)
 - **Navigation**: React Navigation 6.1.17 (DO NOT CHANGE)
 - **State Management**: Zustand 4.5.2 (DO NOT USE REDUX)
 - **Local Storage**: AsyncStorage 1.21.0 (offline-first)
 - **HTTP Client**: Supabase JS Client 2.39.3 (built-in)
-- **Styling**: Native StyleSheet ONLY (NO styled-components)
+- **Styling**: React Native Paper theming system + Material Design 3
 
 ### Backend (Supabase)
 - **Database**: PostgreSQL with Row Level Security

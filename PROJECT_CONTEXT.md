@@ -1,3 +1,9 @@
+## Technical Constraints
+- Using Expo SDK 53 (requires development builds, not Expo Go)
+- Testing via: expo-dev-client or EAS Build
+- Beta distribution: EAS Build preview profile
+
+
 # 🎯 Project Context
 
 **Project:** ADD_NeuroDivergent_App  

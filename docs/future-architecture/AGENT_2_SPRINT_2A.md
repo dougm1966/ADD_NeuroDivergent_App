@@ -1,268 +1,279 @@
-# 🗄️ Agent 2 Sprint 2A: Supabase Foundation
+# 🗄️ Agent 2 Sprint 2A: Voice-Enabled Backend Foundation
 
 ## Mission
-Set up Supabase project and establish secure database connection with environment configuration.
+Set up Supabase backend to process and store voice data while integrating with existing brain state and task systems.
 
 ## Sprint Goal
-Create a working Supabase connection that Agent 3 can build upon for data operations.
+Create a voice-aware backend foundation that AGENT_3 can build upon for enhanced data operations.
 
 ## Time Estimate
-30-45 minutes
+45-60 minutes
 
 ## Prerequisites
-- Node.js 18+ installed
-- Agent 1's Sprint 1A completed (environment structure ready)
-- Supabase account created
+- Pre-foundation complete
+- AGENT_0 voice MVP working
+- Voice session data structure established
+- Basic Supabase connection active
 
 ## Critical Rules (NEVER VIOLATE)
-1. Database: Supabase PostgreSQL ONLY
-2. Security: Never commit API keys to git
-3. Environment: Use exact variable names specified
-4. Connection: Test thoroughly before handoff
+1. Never lose voice session data
+2. Maintain voice data privacy
+3. Preserve voice-brain-state correlation
+4. Use exact RLS policies
+5. Handle offline voice data sync
 
 ## Sprint Tasks
 
-### Task 1: Create Supabase Project
-**Manual Steps** (Do these in browser):
-1. Go to https://supabase.com
-2. Click "New project"
-3. Name: "neurodivergent-productivity-app"
-4. Choose region closest to your users
-5. Generate secure password and save it
-6. Wait for project to initialize (2-3 minutes)
-
-### Task 2: Get Supabase Credentials
-**In Supabase Dashboard:**
-1. Go to Settings → API
-2. Copy "URL" (looks like: https://your-project-ref.supabase.co)
-3. Copy "anon public" key (long string starting with eyJ...)
-4. **Important:** Use the "anon" key, NOT the "service_role" key
-
-### Task 3: Configure Environment Variables
-**Update**: `.env` (replace placeholder values)
-```bash
-# Supabase Configuration
-EXPO_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-
-# OpenAI Configuration (server-side only - no client exposure)
-# OPENAI_API_KEY=your-openai-key-here (set in Supabase Edge Function secrets)
-```
-
-**Security Note:** These environment variables start with `EXPO_PUBLIC_` because they need to be accessible in the React Native client. The anon key is safe to expose as it's designed for client-side use with Row Level Security.
-
-### Task 4: Create Supabase Client
-**Create**: `src/services/supabaseClient.ts`
-```typescript
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-
-// Note: OpenAI API key is NOT exposed client-side
-// OpenAI calls are handled via Supabase Edge Functions for security
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please check your .env file.'
-  );
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: false, // Disable for React Native
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10, // Reasonable rate limit
-    },
-  },
-});
-
-// Export URL for debugging (safe to expose)
-export const SUPABASE_URL = supabaseUrl;
-```
-
-### Task 5: Create Connection Test Utility
-**Create**: `src/services/__tests__/connectionTest.ts`
-```typescript
-import { supabase } from '../supabaseClient';
-
-export const testSupabaseConnection = async (): Promise<boolean> => {
-  try {
-    console.log('🔍 Testing Supabase connection...');
-    
-    // Test basic connectivity
-    const { data, error } = await supabase
-      .from('_test_table_that_does_not_exist')
-      .select('*')
-      .limit(1);
-
-    // We expect this to fail with a specific error (table doesn't exist)
-    // If it fails with connection error, that's a real problem
-    if (error && error.message.includes('does not exist')) {
-      console.log('✅ Supabase connection successful');
-      return true;
-    } else if (error && error.message.includes('network')) {
-      console.error('❌ Network connection failed:', error.message);
-      return false;
-    } else if (error) {
-      console.error('❌ Unexpected connection error:', error.message);
-      return false;
-    }
-
-    // Should not reach here, but if we do, connection works
-    console.log('✅ Supabase connection successful');
-    return true;
-  } catch (error) {
-    console.error('❌ Supabase connection test failed:', error);
-    return false;
-  }
-};
-
-export const testEnvironmentVariables = (): boolean => {
-  console.log('🔍 Testing environment variables...');
+### Task 1: Voice Data Schema
+```sql
+-- Voice Sessions Table
+CREATE TABLE voice_sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id),
+  audio_url TEXT,
+  transcription TEXT,
+  energy_level INTEGER CHECK (energy_level BETWEEN 1 AND 10),
+  mood_detected TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  processed_at TIMESTAMPTZ,
   
-  const requiredVars = [
-    'EXPO_PUBLIC_SUPABASE_URL',
-    'EXPO_PUBLIC_SUPABASE_ANON_KEY'
-    // Note: OpenAI API key removed - handled server-side via Supabase Edge Functions
-  ];
+  -- Voice metadata
+  duration_seconds INTEGER,
+  word_count INTEGER,
+  is_accomplishment BOOLEAN DEFAULT false
+);
 
-  for (const varName of requiredVars) {
-    const value = process.env[varName];
-    if (!value) {
-      console.error(`❌ Missing environment variable: ${varName}`);
-      return false;
-    }
-    if (value.includes('your-') || value.includes('placeholder')) {
-      console.error(`❌ Environment variable ${varName} still has placeholder value`);
-      return false;
-    }
+-- Voice Tasks Table (extracted from voice)
+CREATE TABLE voice_tasks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  voice_session_id UUID REFERENCES voice_sessions(id),
+  task_text TEXT NOT NULL,
+  energy_context INTEGER,
+  priority_detected TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  -- Link to main tasks system
+  task_id UUID REFERENCES tasks(id)
+);
+
+-- Voice Brain States Table
+CREATE TABLE voice_brain_states (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  voice_session_id UUID REFERENCES voice_sessions(id),
+  energy_level INTEGER CHECK (energy_level BETWEEN 1 AND 10),
+  focus_detected TEXT,
+  mood_detected TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  -- Link to main brain states
+  brain_state_id UUID REFERENCES brain_states(id)
+);
+
+-- Voice Accomplishments Table
+CREATE TABLE voice_accomplishments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  voice_session_id UUID REFERENCES voice_sessions(id),
+  accomplishment_text TEXT NOT NULL,
+  energy_level INTEGER,
+  celebration_type TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### Task 2: Voice Data Service
+```typescript
+// src/services/voiceDataService.ts
+import { supabase } from './supabaseClient';
+import { VoiceSession, VoiceTask, VoiceBrainState } from '@voice/types';
+
+export const voiceDataService = {
+  // Voice Session Management
+  async saveVoiceSession(session: Omit<VoiceSession, 'id'>): Promise<VoiceSession> {
+    const { data, error } = await supabase
+      .from('voice_sessions')
+      .insert(session)
+      .single();
+      
+    if (error) throw new Error('Voice session save failed');
+    return data;
+  },
+  
+  // Task Extraction Processing
+  async processVoiceTasks(sessionId: string, tasks: Partial<VoiceTask>[]): Promise<VoiceTask[]> {
+    const { data, error } = await supabase
+      .from('voice_tasks')
+      .insert(tasks.map(task => ({
+        voice_session_id: sessionId,
+        ...task
+      })));
+      
+    if (error) throw new Error('Voice task processing failed');
+    return data;
+  },
+  
+  // Brain State Correlation
+  async correlateVoiceBrainState(
+    sessionId: string, 
+    brainState: Partial<VoiceBrainState>
+  ): Promise<VoiceBrainState> {
+    const { data, error } = await supabase
+      .from('voice_brain_states')
+      .insert({
+        voice_session_id: sessionId,
+        ...brainState
+      })
+      .single();
+      
+    if (error) throw new Error('Brain state correlation failed');
+    return data;
+  },
+  
+  // Accomplishment Tracking
+  async recordVoiceAccomplishment(
+    sessionId: string,
+    accomplishment: { text: string; energyLevel: number }
+  ) {
+    const { error } = await supabase
+      .from('voice_accomplishments')
+      .insert({
+        voice_session_id: sessionId,
+        accomplishment_text: accomplishment.text,
+        energy_level: accomplishment.energyLevel
+      });
+      
+    if (error) throw new Error('Accomplishment recording failed');
   }
-
-  console.log('✅ All environment variables configured');
-  return true;
 };
 ```
 
-### Task 6: Create Basic Service Types
-**Create**: `src/types/supabase.ts`
-```typescript
-export interface SupabaseResponse<T> {
-  data: T | null;
-  error: string | null;
-  loading?: boolean;
-}
+### Task 3: Row Level Security
+```sql
+-- Voice Sessions RLS
+ALTER TABLE voice_sessions ENABLE ROW LEVEL SECURITY;
 
-export interface DatabaseError {
-  message: string;
-  code?: string;
-  details?: string;
-  hint?: string;
-}
+CREATE POLICY "Users can only access their own voice sessions"
+  ON voice_sessions
+  FOR ALL
+  USING (auth.uid() = user_id);
 
-// Basic connection status for debugging
-export interface ConnectionStatus {
-  connected: boolean;
-  url: string;
-  timestamp: string;
-  error?: string;
-}
+-- Voice Tasks RLS
+ALTER TABLE voice_tasks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can only access tasks from their voice sessions"
+  ON voice_tasks
+  FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM voice_sessions
+      WHERE voice_sessions.id = voice_tasks.voice_session_id
+      AND voice_sessions.user_id = auth.uid()
+    )
+  );
+
+-- Similar RLS for other voice tables...
 ```
 
-## Success Criteria (Binary Pass/Fail)
+### Task 4: Voice Analytics Functions
+```sql
+-- Voice Session Analytics
+CREATE OR REPLACE FUNCTION get_voice_session_analytics(
+  user_id UUID,
+  time_period INTERVAL
+)
+RETURNS TABLE (
+  total_sessions INTEGER,
+  avg_energy_level NUMERIC,
+  task_completion_rate NUMERIC,
+  most_productive_time_of_day TEXT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  -- Analytics implementation
+  SELECT 
+    COUNT(*),
+    AVG(energy_level)::NUMERIC,
+    -- ... other analytics
+  FROM voice_sessions
+  WHERE 
+    voice_sessions.user_id = get_voice_session_analytics.user_id
+    AND created_at > NOW() - time_period;
+END;
+$$;
+```
 
-### Must Pass Before Sprint 2B
-- [ ] Supabase project created and accessible
-- [ ] Environment variables set correctly (no placeholders)
-- [ ] Supabase client imports without errors
-- [ ] Connection test passes
-- [ ] No API keys committed to git
-- [ ] TypeScript compilation successful
+### Task 5: Offline Sync Support
+```typescript
+// src/services/voiceOfflineSync.ts
+export const voiceOfflineSync = {
+  async queueVoiceSession(session: VoiceSession): Promise<void> {
+    // Queue for sync when online
+    await AsyncStorage.setItem(
+      `voice_session_queue_${Date.now()}`,
+      JSON.stringify(session)
+    );
+  },
+  
+  async syncQueuedSessions(): Promise<void> {
+    // Sync when back online
+    const keys = await AsyncStorage.getAllKeys();
+    const sessionKeys = keys.filter(k => k.startsWith('voice_session_queue_'));
+    
+    for (const key of sessionKeys) {
+      const session = JSON.parse(await AsyncStorage.getItem(key));
+      await voiceDataService.saveVoiceSession(session);
+      await AsyncStorage.removeItem(key);
+    }
+  }
+};
+```
 
-### Validation Commands
+## Success Criteria
+- [ ] Voice session storage working
+- [ ] Task extraction processing functional
+- [ ] Brain state correlation active
+- [ ] Accomplishment tracking ready
+- [ ] RLS policies protecting voice data
+- [ ] Offline sync functioning
+- [ ] Analytics functions ready
+
+## Validation Commands
 ```bash
-# Test environment variables
-node -e "console.log('URL:', process.env.EXPO_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing')"
-node -e "console.log('Key:', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing')"
+# Test voice data schema
+npm run test:voice-schema
 
-# Test TypeScript compilation
-npx tsc --noEmit src/services/supabaseClient.ts
-npx tsc --noEmit src/types/supabase.ts
+# Verify RLS policies
+npm run test:voice-security
 
-# Test connection (run this in your development environment)
-npx tsx src/services/__tests__/connectionTest.ts
+# Test offline sync
+npm run test:voice-offline
 ```
 
-### Manual Validation Steps
-1. **Environment Check:**
-   - Verify `.env` file has real values (not placeholders)
-   - Confirm `.env` is in `.gitignore`
-2. **Supabase Dashboard Check:**
-   - Log into Supabase dashboard
-   - Verify project exists and is active
-   - Check that API keys match your `.env` file
-3. **Import Test:**
-   - Verify `import { supabase } from './services/supabaseClient'` works in any file
-
-## What Sprint 2B Needs From This Sprint
-- Working Supabase connection
-- Environment variables properly configured
-- Basic service types defined
-- Connection testing utilities
-- Clean foundation for database schema creation
-
-## Interface Contracts (For Sprint 2B)
-```typescript
-// Supabase client ready for database operations
-export const supabase: SupabaseClient;
-
-// Type definitions for responses
-export interface SupabaseResponse<T>;
-
-// Connection testing utilities
-export const testSupabaseConnection: () => Promise<boolean>;
-```
+## What Sprint 2B Needs
+- Complete voice data schema
+- Voice processing services
+- Security policies
+- Analytics foundation
+- Offline capabilities
 
 ## Common Mistakes to Avoid
-- Don't use the service_role key in client code (security risk)
-- Don't commit API keys to git (use .gitignore)
-- Don't skip the connection test (prevents silent failures)
-- Don't use placeholder values in production
+- Don't lose offline voice data
+- Don't skip voice data validation
+- Don't break RLS policies
+- Don't mix voice/non-voice data
+- Don't ignore analytics needs
 
-## Troubleshooting
-
-### If Supabase Connection Fails
-1. **Check environment variables:**
-   ```bash
-   echo $EXPO_PUBLIC_SUPABASE_URL
-   echo $EXPO_PUBLIC_SUPABASE_ANON_KEY
-   ```
-2. **Verify URL format:** Should be `https://your-project-ref.supabase.co`
-3. **Check anon key:** Should start with `eyJ` (it's a JWT token)
-4. **Confirm project status:** In Supabase dashboard, ensure project is active
-
-### If TypeScript Errors Occur
-1. **Missing dependencies:** Run `npm install @supabase/supabase-js`
-2. **Type errors:** Ensure TypeScript version is 4.5+
-3. **Import errors:** Check file paths are correct
-
-### If Environment Variables Don't Load
-1. **File location:** Ensure `.env` is in project root
-2. **Expo configuration:** Restart Expo dev server after changing `.env`
-3. **Variable naming:** Must start with `EXPO_PUBLIC_` for client access
-
-## Files Created This Sprint
-- `src/services/supabaseClient.ts`
-- `src/services/__tests__/connectionTest.ts`
-- `src/types/supabase.ts`
-- Updated `.env` with Supabase credentials
+## Files Created/Modified
+- Voice schema migrations
+- Voice data services
+- RLS policies
+- Analytics functions
+- Offline sync utilities
 
 ## Next Sprint Preview
-Sprint 2B will create the complete database schema with all tables, Row Level Security policies, and performance indexes.
+Sprint 2B will add enhanced voice data processing and task extraction algorithms.
 
 ---
-**Sprint 2A Focus**: Solid Supabase foundation that everything else builds upon.
+**Sprint 2A Focus**: Solid voice data foundation that everything builds upon.

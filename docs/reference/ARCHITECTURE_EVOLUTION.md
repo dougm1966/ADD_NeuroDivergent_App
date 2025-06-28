@@ -147,64 +147,82 @@ interface CustomizationStore { ... }
 
 ### **Phase 1 Design System** (Current)
 ```typescript
-// Color system (neurodivergent-friendly)
-export const COLORS = {
-  PRIMARY: '#7FB3D3',      // Soft blue
-  SUCCESS: '#96CEB4',      // Gentle green  
-  WARNING: '#FFD93D',      // Soft yellow
-  // NEVER: Red colors anywhere
+// OFFICIAL UI LIBRARY: React Native Paper (MANDATORY)
+import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+
+// Color system (neurodivergent-friendly) using Paper theme
+export const lightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#4CAF50',        // Calming green
+    secondary: '#2196F3',      // Trustworthy blue
+    tertiary: '#81C784',       // Soft accent
+    surface: '#F8F9FA',        // Gentle background
+    // NEVER: Red colors anywhere
+  },
 };
 
-// Component adaptation
+// Component adaptation using Paper components
 interface ComponentAdaptation {
-  touchTargetSize: number;  // 44px minimum
-  spacing: number;          // 8px grid
-  fontSize: number;         // Brain state responsive
+  paperVariant: 'contained' | 'outlined' | 'text';  // Paper button modes
+  textVariant: 'displayLarge' | 'headlineMedium' | 'bodyLarge';  // Paper typography
+  touchTargetSize: number;  // 44px minimum (Paper default)
+  spacing: number;          // Material Design 3 grid
 }
 ```
 
 ### **Phase 2 Design System Extensions** (Future)
 ```typescript
-// Extended color system (additive)
-export const COLORS = {
-  // Phase 1 colors (unchanged)
-  PRIMARY: '#7FB3D3',
-  SUCCESS: '#96CEB4', 
-  WARNING: '#FFD93D',
-  
-  // Phase 2 additions
-  ACHIEVEMENT_BRONZE: '#CD7F32',
-  ACHIEVEMENT_SILVER: '#C0C0C0', 
-  ACHIEVEMENT_GOLD: '#FFD700',
-  SOCIAL_ONLINE: '#90EE90',
-  SOCIAL_AWAY: '#FFA500',
+// Extended Paper theme system (additive)
+export const lightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    // Phase 1 colors (unchanged)
+    primary: '#4CAF50',
+    secondary: '#2196F3',
+    tertiary: '#81C784',
+    surface: '#F8F9FA',
+    
+    // Phase 2 additions (custom colors)
+    achievementBronze: '#CD7F32',
+    achievementSilver: '#C0C0C0',
+    achievementGold: '#FFD700',
+    socialOnline: '#90EE90',
+    socialAway: '#FFA500',
+  },
 };
 
-// Enhanced component adaptation
+// Enhanced component adaptation using Paper
 interface ComponentAdaptation {
   // Phase 1 properties (unchanged)
+  paperVariant: 'contained' | 'outlined' | 'text';
+  textVariant: 'displayLarge' | 'headlineMedium' | 'bodyLarge';
   touchTargetSize: number;
   spacing: number;
-  fontSize: number;
   
   // Phase 2 additions
   celebrationIntensity: 'subtle' | 'standard' | 'energetic';
   socialVisibility: boolean;
   customTheme: string;
+  paperMode: 'elevated' | 'outlined' | 'contained';  // Paper Card modes
 }
 ```
 
 ### **Phase 1 Architectural Decisions**
-- **Design Token System**: Centralized constants support theme extensions
-- **Component Composition**: Base components support feature-specific variants
-- **Accessibility Framework**: WCAG 2.1 AA patterns scale to complex features
-- **Brain State Adaptation**: Core adaptation logic applies to all new components
+- **React Native Paper Standard**: ALL UI components must use Paper (mandatory)
+- **Material Design 3 Theme System**: Centralized theming supports extensions
+- **Paper Component Composition**: Base Paper components support feature variants
+- **Accessibility Framework**: Paper's built-in WCAG 2.1 AA patterns scale to complex features
+- **Brain State Adaptation**: Core adaptation logic applies to all new Paper components
 
 ### **Critical Phase 1 Requirements**
-1. **Extensible Color System**: Never use red, leave room for achievement colors
-2. **Scalable Typography**: Font system supports new content types (social, achievements)
-3. **Component Patterns**: Consistent props and callback patterns for all components
-4. **Accessibility Infrastructure**: Screen reader and motion reduction support everything
+1. **Paper Component Library**: Never use React Native core components
+2. **Extensible Paper Theme**: Custom colors added to Paper theme (achievements, social)
+3. **Scalable Paper Typography**: Semantic variants support new content types
+4. **Paper Component Patterns**: Consistent Paper props and callback patterns
+5. **Paper Accessibility Infrastructure**: Leverage Paper's built-in accessibility features
 
 ---
 
@@ -220,9 +238,14 @@ if (data) {
   updateBrainStateStore(data);
 }
 
-// Agent 3 → Agent 4: Store to Component
+// Agent 3 → Agent 4: Store to Paper Component
 const { currentBrainState } = useBrainStateStore();
-<GentleButton adaptation={getAdaptation(currentBrainState)} />
+<Button 
+  mode="contained"
+  adaptation={getAdaptation(currentBrainState)}
+>
+  Gentle Action
+</Button>
 ```
 
 #### **Phase 2 Extension** (Future)
@@ -233,12 +256,16 @@ if (data) {
   updateAchievementStore(data);  // New store, same pattern
 }
 
-// Enhanced adaptation
+// Enhanced adaptation with Paper components
 const { currentBrainState, achievementState } = useCombinedState();
-<GentleButton 
+<Button 
+  mode="contained"
   adaptation={getAdaptation(currentBrainState)}
   celebration={getCelebration(achievementState)}  // New prop, same pattern
-/>
+  buttonColor={theme.colors.primary}
+>
+  Enhanced Action
+</Button>
 ```
 
 ### **API Evolution Guarantee**

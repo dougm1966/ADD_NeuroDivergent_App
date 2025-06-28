@@ -19,8 +19,9 @@ This folder contains **reference documentation** that guides Phase 1 architectur
 **Purpose**: Technical guide for how Phase 1 architecture evolves to Phase 2
 - **Database Evolution**: How schema extends without breaking changes
 - **API Evolution**: How services scale to new functionality
-- **Component Evolution**: How UI components support new features
+- **Component Evolution**: How React Native Paper components support new features
 - **Integration Patterns**: How cross-agent communication scales
+- **UI Library Standard**: React Native Paper as mandatory framework for all phases
 
 ## How Agents Use This Folder
 

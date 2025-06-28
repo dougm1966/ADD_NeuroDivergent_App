@@ -1,23 +1,24 @@
 # 🎨 Agent 4 Sprint 4A: Design System Foundation
 
 ## Mission
-Create neurodivergent-friendly design system foundation with colors, typography, spacing, and accessibility constants.
+Create a neurodivergent-friendly design system with voice-first patterns, ensuring gentle, accessible UI throughout the app.
 
 ## Time Estimate
 1 hour
 
 ## Prerequisites
-- Agent 1 folder structure ready (src/constants/)
-- CLAUDE.md neurodivergent principles understood
+- Pre-foundation voice MVP working
+- AGENT_0 voice patterns established
+- Neurodivergent principles understood
 
 ## Sprint Goal
-Complete design system foundation that enforces gentle, accessible UI patterns throughout the app.
+Complete design system foundation that supports voice-first interaction while enabling sophisticated UI patterns.
 
 ## Core Tasks
 
-### Task 1: Neurodivergent-Friendly Color System
-**Create**: `src/constants/colors.ts`
+### Task 1: Voice-Aware Color System
 ```typescript
+// src/constants/colors.ts
 export const COLORS = {
   // Primary palette (calming, neurodivergent-friendly)
   PRIMARY: '#7FB3D3',      // Soft blue - main brand color
@@ -26,504 +27,234 @@ export const COLORS = {
   WARNING: '#FFD93D',      // Soft yellow - warnings (NEVER red)
   INFO: '#A8D8EA',         // Light blue - informational
   
-  // Neutrals
-  BACKGROUND: '#FAFAFA',   // Soft white - main background
-  SURFACE: '#FFFFFF',      // Pure white - cards and surfaces
-  TEXT_PRIMARY: '#2C3E50', // Dark blue-gray - main text
-  TEXT_SECONDARY: '#7F8C8D', // Medium gray - secondary text
-  TEXT_TERTIARY: '#BDC3C7', // Light gray - hint text
-  BORDER: '#E8E8E8',       // Subtle borders
-  DIVIDER: '#F1F2F6',      // Very light separator
+  // Voice-specific colors
+  VOICE_ACTIVE: '#9FD4FF',    // Pulsing blue - recording active
+  VOICE_PROCESSING: '#E6F3FF', // Soft blue - processing state
+  VOICE_SUCCESS: '#D4F2EA',   // Gentle mint - voice recognized
+  VOICE_ATTENTION: '#FFE4B5',  // Soft peach - needs attention
+  VOICE_CELEBRATION: '#E8F8F5',// Light mint - celebration state
   
-  // Interactive states
-  BUTTON_PRIMARY: '#7FB3D3',
-  BUTTON_PRIMARY_PRESSED: '#6BA3C3',
-  BUTTON_SECONDARY: '#E8F4F8',
-  BUTTON_SECONDARY_PRESSED: '#D4EDF5',
-  BUTTON_DISABLED: '#F7F9FC',
+  // Neutrals (unchanged)
+  BACKGROUND: '#FAFAFA',   
+  SURFACE: '#FFFFFF',      
+  TEXT_PRIMARY: '#2C3E50', 
+  TEXT_SECONDARY: '#7F8C8D',
+  TEXT_TERTIARY: '#BDC3C7',
+  BORDER: '#E8E8E8',       
+  DIVIDER: '#F1F2F6',      
   
-  // Brain state specific colors
-  ENERGY_LOW: '#FFE4B5',      // Soft peach
-  ENERGY_MEDIUM: '#E6F3FF',   // Light blue
-  ENERGY_HIGH: '#E8F8F5',     // Light mint
+  // Voice button states
+  VOICE_BUTTON_IDLE: '#7FB3D3',
+  VOICE_BUTTON_RECORDING: '#9FD4FF',
+  VOICE_BUTTON_PROCESSING: '#E6F3FF',
+  VOICE_BUTTON_DISABLED: '#F7F9FC',
   
-  // Freemium specific
-  PREMIUM_ACCENT: '#9B59B6',  // Gentle purple
-  QUOTA_LOW: '#F39C12',       // Warm orange
-  QUOTA_GOOD: '#27AE60',      // Calming green
-  UPGRADE_HIGHLIGHT: '#E8E6FF', // Very light purple
-  
-  // FORBIDDEN COLORS (documented for enforcement)
-  // RED variants: #FF0000, #DC143C, #B22222 - NEVER USE
-  // BRIGHT_ORANGE: #FF4500 - Too stimulating
-  // HOT_PINK: #FF69B4 - Too overwhelming
-  // Any color with high saturation that might trigger sensory issues
-} as const;
-
-// Type for strict color usage
-export type ColorKey = keyof typeof COLORS;
-
-// Validation helper to prevent red colors
-export const validateColor = (color: string): boolean => {
-  const redPatterns = [
-    /^#[Ff][0-9A-Fa-f]{4}$/, // Short red format
-    /^#[Ff][0-9A-Fa-f]{2}[0-9A-Fa-f]{2}[0-9A-Fa-f]{2}$/, // Long red format
-  ];
-  
-  return !redPatterns.some(pattern => pattern.test(color));
+  // Brain state specific (enhanced)
+  ENERGY_LOW: '#FFE4B5',      // Soft peach - gentle voice UI
+  ENERGY_MEDIUM: '#E6F3FF',   // Light blue - standard voice UI
+  ENERGY_HIGH: '#E8F8F5',     // Light mint - dynamic voice UI
 };
 ```
 
-### Task 2: Accessible Typography System
-**Create**: `src/constants/typography.ts`
+### Task 2: Voice Animation Patterns
 ```typescript
-export const TYPOGRAPHY = {
-  FAMILIES: {
-    REGULAR: 'System', // Use system font for consistency
-    DYSLEXIA_FRIENDLY: 'OpenDyslexic', // Available for accessibility
-    MONOSPACE: 'Courier New', // For technical content
+// src/constants/animations.ts
+export const ANIMATIONS = {
+  // Voice-specific animations
+  VOICE_RECORDING: {
+    duration: 1500,
+    easing: 'easeInOut',
+    scale: [1, 1.1],
+    opacity: [1, 0.8],
+    repeat: Infinity,
   },
   
-  SIZES: {
-    // Following iOS HIG and Android Material Design guidelines
-    HEADING_LARGE: 32,   // Major headings
-    HEADING_MEDIUM: 28,  // Section headings
-    HEADING_SMALL: 24,   // Subsection headings
-    TITLE: 20,           // Card titles, important labels
-    BODY_LARGE: 18,      // Prominent body text
-    BODY: 16,            // Standard body text (minimum readable)
-    BODY_SMALL: 14,      // Secondary information
-    CAPTION: 12,         // Metadata, very minor text
-    BUTTON: 16,          // Button text size
+  VOICE_PROCESSING: {
+    duration: 1000,
+    easing: 'linear',
+    rotate: ['0deg', '360deg'],
+    repeat: Infinity,
   },
   
-  WEIGHTS: {
-    BOLD: '700' as const,
-    SEMIBOLD: '600' as const,
-    MEDIUM: '500' as const,
-    REGULAR: '400' as const,
-    LIGHT: '300' as const,
+  VOICE_CELEBRATION: {
+    duration: 2000,
+    easing: 'spring',
+    scale: [0.8, 1.2, 1],
+    opacity: [0, 1],
   },
   
-  LINE_HEIGHT: {
-    TIGHT: 1.2,          // Dense layouts
-    NORMAL: 1.5,         // Default for accessibility (WCAG recommended)
-    RELAXED: 1.8,        // Low energy states, easier reading
-    SPACIOUS: 2.0,       // Very low energy, maximum comfort
+  // Energy-based variations
+  LOW_ENERGY_VOICE: {
+    duration: 2000, // Slower, gentler
+    easing: 'easeInOut',
   },
   
-  LETTER_SPACING: {
-    TIGHT: -0.5,
-    NORMAL: 0,
-    RELAXED: 0.5,
-    WIDE: 1.0,
+  HIGH_ENERGY_VOICE: {
+    duration: 1000, // More dynamic
+    easing: 'spring',
   },
-} as const;
-
-// Brain state adaptive typography
-export const getAdaptiveTypography = (energyLevel: number) => {
-  if (energyLevel <= 3) {
-    return {
-      lineHeight: TYPOGRAPHY.LINE_HEIGHT.SPACIOUS,
-      letterSpacing: TYPOGRAPHY.LETTER_SPACING.RELAXED,
-      fontSize: Math.max(TYPOGRAPHY.SIZES.BODY, 18), // Increase base size
-    };
-  }
-  
-  if (energyLevel >= 7) {
-    return {
-      lineHeight: TYPOGRAPHY.LINE_HEIGHT.TIGHT,
-      letterSpacing: TYPOGRAPHY.LETTER_SPACING.NORMAL,
-      fontSize: TYPOGRAPHY.SIZES.BODY,
-    };
-  }
-  
-  return {
-    lineHeight: TYPOGRAPHY.LINE_HEIGHT.NORMAL,
-    letterSpacing: TYPOGRAPHY.LETTER_SPACING.NORMAL,
-    fontSize: TYPOGRAPHY.SIZES.BODY,
-  };
 };
 ```
 
-### Task 3: Adaptive Spacing & Layout System
-**Create**: `src/constants/spacing.ts`
+### Task 3: Voice Component Sizing
 ```typescript
-// 8px base grid system for consistency
+// src/constants/spacing.ts
 export const SPACING = {
-  XXS: 2,   // Tiny gaps
-  XS: 4,    // Very small spacing
-  SM: 8,    // Small spacing
-  MD: 16,   // Medium spacing (base)
-  LG: 24,   // Large spacing
-  XL: 32,   // Extra large spacing
-  XXL: 48,  // Very large spacing
-  XXXL: 64, // Maximum spacing
-} as const;
-
-export const LAYOUT = {
-  // Touch targets (Apple HIG & WCAG accessibility guidelines)
-  TOUCH_TARGET_MIN: 44,        // Absolute minimum (Apple HIG)
-  TOUCH_TARGET_PREFERRED: 48,  // Preferred minimum
-  TOUCH_TARGET_COMFORTABLE: 56, // Comfortable for low dexterity
-  TOUCH_SPACING_MIN: 8,        // Minimum space between touch targets
+  // Base spacing (unchanged)
+  BASE: 8,
+  SMALL: 12,
+  MEDIUM: 16,
+  LARGE: 24,
   
-  // Screen padding and safe areas
-  SCREEN_PADDING: SPACING.MD,
-  SECTION_SPACING: SPACING.LG,
-  CARD_PADDING: SPACING.MD,
-  
-  // Border radius for consistent design
-  BORDER_RADIUS: {
-    SMALL: 4,
-    MEDIUM: 8,
-    LARGE: 12,
-    EXTRA_LARGE: 16,
-    ROUND: 999, // Fully rounded
+  // Voice-specific spacing
+  VOICE_BUTTON: {
+    SIZE: 72,        // Large, easy to tap
+    PADDING: 24,     // Comfortable spacing
+    MARGIN: 16,      // Clear separation
   },
   
-  // Adaptive spacing based on brain state energy level
-  SPACING_LOW_ENERGY: {
-    VERTICAL: SPACING.XXL,     // More breathing room
-    HORIZONTAL: SPACING.LG,
-    SECTION: SPACING.XXXL,
-    TOUCH_TARGET: 56,          // Larger, easier targets
+  VOICE_INDICATOR: {
+    SIZE: 48,        // Visible but not dominant
+    PULSE_RANGE: 8,  // Animation range
   },
   
-  SPACING_MEDIUM_ENERGY: {
-    VERTICAL: SPACING.LG,
-    HORIZONTAL: SPACING.MD,
-    SECTION: SPACING.XL,
-    TOUCH_TARGET: 48,
+  VOICE_FEEDBACK: {
+    PADDING: 20,     // Generous padding
+    MARGIN: 16,      // Clear spacing
   },
-  
-  SPACING_HIGH_ENERGY: {
-    VERTICAL: SPACING.MD,
-    HORIZONTAL: SPACING.SM,
-    SECTION: SPACING.LG,
-    TOUCH_TARGET: 44,          // Standard minimum
-  },
-} as const;
-
-// Helper function for Agent 3 integration
-export const getAdaptiveSpacing = (energyLevel: number) => {
-  if (energyLevel <= 3) return LAYOUT.SPACING_LOW_ENERGY;
-  if (energyLevel >= 7) return LAYOUT.SPACING_HIGH_ENERGY;
-  return LAYOUT.SPACING_MEDIUM_ENERGY;
-};
-
-export const getAdaptiveTouchTarget = (focusLevel: number): number => {
-  if (focusLevel <= 3) return LAYOUT.TOUCH_TARGET_COMFORTABLE; // 56px
-  if (focusLevel >= 7) return LAYOUT.TOUCH_TARGET_MIN;         // 44px
-  return LAYOUT.TOUCH_TARGET_PREFERRED;                       // 48px
 };
 ```
 
-### Task 4: Accessibility Constants
-**Create**: `src/constants/accessibility.ts`
+### Task 4: Voice Typography System
 ```typescript
-export const ACCESSIBILITY = {
-  // WCAG compliance levels
-  CONTRAST_RATIOS: {
-    NORMAL_TEXT: 4.5,        // WCAG AA standard
-    LARGE_TEXT: 3.0,         // For text 18pt+ or 14pt+ bold
-    ENHANCED: 7.0,           // WCAG AAA standard
+// src/constants/typography.ts
+export const TYPOGRAPHY = {
+  // Base styles (unchanged)
+  HEADER: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  BODY: {
+    fontSize: 16,
+    fontWeight: '400',
   },
   
-  // Screen reader labels
-  LABELS: {
-    SLIDER: {
-      ENERGY: 'Energy level slider from 1 to 10',
-      FOCUS: 'Focus level slider from 1 to 10', 
-      MOOD: 'Mood level slider from 1 to 10',
-    },
-    BUTTONS: {
-      SUBMIT: 'Submit brain state check-in',
-      COMPLETE_TASK: 'Mark task as completed',
-      REQUEST_BREAKDOWN: 'Request AI task breakdown',
-      UPGRADE: 'Upgrade to premium subscription',
-      CLOSE: 'Close dialog',
-      BACK: 'Go back to previous screen',
-    },
-    STATUS: {
-      LOADING: 'Loading content',
-      ERROR: 'Error occurred',
-      SUCCESS: 'Action completed successfully',
-      OFFLINE: 'Working offline',
-    },
+  // Voice-specific styles
+  VOICE_PROMPT: {
+    fontSize: 20,
+    fontWeight: '500',
+    lineHeight: 28,
+    letterSpacing: 0.15,
   },
   
-  // Semantic hints for screen readers
-  HINTS: {
-    BRAIN_STATE_SLIDER: 'Adjust to match your current state',
-    TASK_COMPLEXITY: 'Based on your energy level',
-    AI_BREAKDOWN: 'Uses your monthly AI quota',
-    UPGRADE_PROMPT: 'Optional premium features available',
+  VOICE_FEEDBACK: {
+    fontSize: 18,
+    fontWeight: '400',
+    lineHeight: 24,
+    letterSpacing: 0.1,
   },
   
-  // Animation preferences
-  ANIMATION: {
-    REDUCED_MOTION_DURATION: 200, // When reduce motion is enabled
-    STANDARD_DURATION: 300,
-    CELEBRATION_DURATION: 500,
-    SPRING_CONFIG: {
-      damping: 15,
-      stiffness: 150,
-      mass: 1,
-    },
+  VOICE_CELEBRATION: {
+    fontSize: 22,
+    fontWeight: '600',
+    lineHeight: 30,
+    letterSpacing: 0.2,
   },
-  
-  // High contrast mode colors
-  HIGH_CONTRAST: {
-    BACKGROUND: '#FFFFFF',
-    TEXT: '#000000',
-    BORDER: '#000000',
-    FOCUS: '#0000FF',
-    SUCCESS: '#008000',
-    WARNING: '#FFA500',
-    ERROR: '#800000', // Dark red, not bright red
-  },
-} as const;
-
-// Helper function to check if high contrast is needed
-export const shouldUseHighContrast = (userPreference?: boolean): boolean => {
-  // This would integrate with system accessibility settings
-  return userPreference || false;
 };
 ```
 
-### Task 5: Design System Export
-**Create**: `src/constants/index.ts`
+### Task 5: Voice UI Patterns
 ```typescript
-export { COLORS, validateColor } from './colors';
-export type { ColorKey } from './colors';
-
-export { TYPOGRAPHY, getAdaptiveTypography } from './typography';
-
-export { 
-  SPACING, 
-  LAYOUT, 
-  getAdaptiveSpacing, 
-  getAdaptiveTouchTarget 
-} from './spacing';
-
-export { 
-  ACCESSIBILITY, 
-  shouldUseHighContrast 
-} from './accessibility';
-
-// Combined adaptive theme utility for Agent 3 integration
-export interface AdaptiveTheme {
-  spacing: {
-    vertical: number;
-    horizontal: number;
-    section: number;
-    touchTarget: number;
-  };
-  typography: {
-    lineHeight: number;
-    letterSpacing: number;
-    fontSize: number;
-  };
-  animation: {
-    duration: number;
-    reduceMotion: boolean;
-  };
-  colors: {
-    background: string;
-    text: string;
-    border: string;
-    primary: string;
-  };
-}
-
-export const getAdaptiveTheme = (
-  energyLevel: number, 
-  focusLevel: number,
-  userPreferences?: {
-    reduceMotion?: boolean;
-    highContrast?: boolean;
-  }
-): AdaptiveTheme => {
-  const spacing = getAdaptiveSpacing(energyLevel);
-  const typography = getAdaptiveTypography(energyLevel);
-  const touchTarget = getAdaptiveTouchTarget(focusLevel);
-  const highContrast = shouldUseHighContrast(userPreferences?.highContrast);
+// src/constants/patterns.ts
+export const UI_PATTERNS = {
+  // Voice interaction patterns
+  VOICE_BUTTON: {
+    shape: 'circle',
+    elevation: 2,
+    pressAnimation: 'gentle',
+    feedbackDuration: 150,
+  },
   
-  return {
-    spacing: {
-      vertical: spacing.VERTICAL,
-      horizontal: spacing.HORIZONTAL,
-      section: spacing.SECTION,
-      touchTarget,
+  VOICE_INDICATOR: {
+    pulsePattern: 'breathe',
+    transitionDuration: 300,
+    opacity: {
+      active: 1,
+      inactive: 0.8,
     },
-    typography: {
-      lineHeight: typography.lineHeight,
-      letterSpacing: typography.letterSpacing,
-      fontSize: typography.fontSize,
+  },
+  
+  VOICE_FEEDBACK: {
+    entryAnimation: 'fadeIn',
+    exitAnimation: 'fadeOut',
+    duration: 400,
+  },
+  
+  // Energy-based adaptations
+  ENERGY_ADAPTATIONS: {
+    low: {
+      animations: 'minimal',
+      transitions: 'gentle',
+      feedback: 'subtle',
     },
-    animation: {
-      duration: userPreferences?.reduceMotion 
-        ? ACCESSIBILITY.ANIMATION.REDUCED_MOTION_DURATION
-        : ACCESSIBILITY.ANIMATION.STANDARD_DURATION,
-      reduceMotion: userPreferences?.reduceMotion || false,
+    medium: {
+      animations: 'standard',
+      transitions: 'smooth',
+      feedback: 'clear',
     },
-    colors: highContrast 
-      ? {
-          background: ACCESSIBILITY.HIGH_CONTRAST.BACKGROUND,
-          text: ACCESSIBILITY.HIGH_CONTRAST.TEXT,
-          border: ACCESSIBILITY.HIGH_CONTRAST.BORDER,
-          primary: ACCESSIBILITY.HIGH_CONTRAST.FOCUS,
-        }
-      : {
-          background: COLORS.BACKGROUND,
-          text: COLORS.TEXT_PRIMARY,
-          border: COLORS.BORDER,
-          primary: COLORS.PRIMARY,
-        },
-  };
+    high: {
+      animations: 'dynamic',
+      transitions: 'energetic',
+      feedback: 'celebratory',
+    },
+  },
 };
-
-// Gentle UI message utilities for consistent language
-export const getGentleUIMessage = (
-  type: 'loading' | 'error' | 'empty' | 'success' | 'offline',
-  context?: string
-): string => {
-  const messages = {
-    loading: 'Just a moment...',
-    error: context 
-      ? `Let's try that ${context} again in a moment`
-      : "Something unexpected happened, but we're on it",
-    empty: "You're all caught up! Take a moment to celebrate. ✨",
-    success: 'Wonderful work!',
-    offline: 'Working offline - will sync when reconnected',
-  };
-  
-  return messages[type];
-};
-```
-
-### Task 6: Design System Validation
-**Create**: `__tests__/constants/designSystem.test.ts`
-```typescript
-import { 
-  COLORS, 
-  validateColor, 
-  TYPOGRAPHY, 
-  SPACING, 
-  LAYOUT,
-  getAdaptiveTheme,
-  getGentleUIMessage 
-} from '../../src/constants';
-
-describe('Design System Foundation', () => {
-  describe('Color System', () => {
-    test('should not contain any red colors', () => {
-      Object.values(COLORS).forEach(color => {
-        expect(validateColor(color)).toBe(true);
-      });
-    });
-    
-    test('should have proper contrast ratios', () => {
-      // Test critical color combinations
-      const combinations = [
-        { bg: COLORS.BACKGROUND, text: COLORS.TEXT_PRIMARY },
-        { bg: COLORS.PRIMARY, text: COLORS.SURFACE },
-        { bg: COLORS.SUCCESS, text: COLORS.SURFACE },
-      ];
-      
-      combinations.forEach(({ bg, text }) => {
-        const contrast = calculateContrastRatio(bg, text);
-        expect(contrast).toBeGreaterThanOrEqual(4.5);
-      });
-    });
-  });
-  
-  describe('Typography System', () => {
-    test('should have readable minimum font sizes', () => {
-      expect(TYPOGRAPHY.SIZES.BODY).toBeGreaterThanOrEqual(16);
-      expect(TYPOGRAPHY.SIZES.CAPTION).toBeGreaterThanOrEqual(12);
-    });
-    
-    test('should provide accessible line heights', () => {
-      expect(TYPOGRAPHY.LINE_HEIGHT.NORMAL).toBeGreaterThanOrEqual(1.5);
-    });
-  });
-  
-  describe('Touch Target System', () => {
-    test('should meet accessibility minimums', () => {
-      expect(LAYOUT.TOUCH_TARGET_MIN).toBeGreaterThanOrEqual(44);
-      expect(LAYOUT.TOUCH_TARGET_PREFERRED).toBeGreaterThanOrEqual(44);
-    });
-  });
-  
-  describe('Adaptive Theme System', () => {
-    test('should adapt correctly for low energy', () => {
-      const theme = getAdaptiveTheme(2, 3);
-      
-      expect(theme.spacing.touchTarget).toBe(56); // Larger for low focus
-      expect(theme.spacing.vertical).toBe(SPACING.XXL); // More space for low energy
-      expect(theme.typography.lineHeight).toBe(2.0); // Spacious reading
-    });
-    
-    test('should adapt correctly for high energy', () => {
-      const theme = getAdaptiveTheme(8, 9);
-      
-      expect(theme.spacing.touchTarget).toBe(44); // Standard for high focus
-      expect(theme.spacing.vertical).toBe(SPACING.MD); // Compact for high energy
-      expect(theme.typography.lineHeight).toBe(1.2); // Tight reading
-    });
-  });
-  
-  describe('Gentle Language System', () => {
-    test('should provide encouraging messages', () => {
-      const errorMessage = getGentleUIMessage('error', 'saving');
-      expect(errorMessage).toContain('try that saving again');
-      expect(errorMessage).not.toMatch(/fail|error|wrong/i);
-    });
-    
-    test('should have positive empty states', () => {
-      const emptyMessage = getGentleUIMessage('empty');
-      expect(emptyMessage).toContain('celebrate');
-    });
-  });
-});
-
-// Helper function for contrast ratio calculation
-function calculateContrastRatio(color1: string, color2: string): number {
-  // Simplified contrast calculation for testing
-  // In real implementation, would convert hex to RGB and calculate proper ratio
-  return 4.5; // Mock passing value
-}
 ```
 
 ## Success Criteria
-- [ ] Complete color system with no red colors anywhere
-- [ ] Typography system meets WCAG accessibility guidelines
-- [ ] Spacing system provides consistent 8px grid
-- [ ] Touch targets meet 44px minimum requirement
-- [ ] Adaptive theme system responds to brain state levels
-- [ ] Gentle language utilities provide shame-free messaging
-- [ ] All constants properly typed and exported
+- [ ] Voice recording UI patterns defined
+- [ ] Voice feedback color scheme complete
+- [ ] Voice celebration animations created
+- [ ] Energy-based adaptations specified
+- [ ] All patterns are neurodivergent-friendly
+- [ ] Voice components properly sized
+- [ ] Animation patterns defined
+- [ ] Typography system supports voice UI
 
 ## Testing Commands
 ```bash
-npm run test -- --testPathPattern=designSystem
+# Test voice color contrast
+npm run test:voice-contrast
+
+# Validate animation patterns
+npm run test:voice-animations
+
+# Check accessibility
+npm run test:voice-a11y
 ```
 
-## Next Sprint
-**4B: Base Interactive Components** - Build GentleButton and BrainStateSlider using design system.
+## What Other Agents Need
+- **AGENT_0**: Complete voice UI patterns
+- **AGENT_1**: Voice navigation styles
+- **AGENT_2**: Voice data visualization
+- **AGENT_3**: Voice celebration themes
 
-## Agent Dependencies
-- **Provides to Agent 4B**: Complete design system foundation
-- **Provides to Agent 3**: `getAdaptiveTheme()` utility for brain state adaptation
-- **Provides to Agent 1**: Constants for consistent app-wide styling
+## Common Mistakes to Avoid
+- Don't use jarring animations
+- Don't make voice button too small
+- Don't use overwhelming colors
+- Don't ignore energy states
+- Don't create complex patterns
 
-## Common Issues
-- **Color validation**: Use `validateColor()` helper to prevent red colors
-- **Touch targets**: Always use `getAdaptiveTouchTarget()` for interactive elements
-- **Typography**: Apply adaptive typography based on brain state energy levels
-- **Spacing**: Use design system constants instead of magic numbers
+## Files Created/Modified
+- `src/constants/colors.ts` (enhanced)
+- `src/constants/animations.ts` (new)
+- `src/constants/spacing.ts` (enhanced)
+- `src/constants/typography.ts` (enhanced)
+- `src/constants/patterns.ts` (new)
+
+## Next Sprint Preview
+Sprint 4B will create voice-aware interactive components using this design system.
 
 ---
-**Focus**: Foundation only. Interactive components come in 4B.
+**Sprint 4A Focus**: Voice-first design patterns that adapt to user energy.
