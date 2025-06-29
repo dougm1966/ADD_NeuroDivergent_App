@@ -1,0 +1,21 @@
+{
+  "name": "add_neurodivergent_app",
+  "version": "1.0.0",
+  "description": "**Speak your overwhelm, get organized output, celebrate ANY accomplishment**",
+  "main": "test-supabase.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@expo/webpack-config": "^19.0.1",
+    "@supabase/supabase-js": "^2.50.2",
+    "react-dom": "^19.1.0",
+    "react-native-web": "^0.20.0"
+  }
+}
